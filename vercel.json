@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "api/gemini.js", "use": "@vercel/node" },
-    { "src": "package.json", "use": "@vercel/static-build" }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+      "api/**/*.js": {
+          "runtime": "nodejs18.x"
+      }
+  },
   "routes": [
-    { "src": "/api/gemini", "dest": "/api/gemini.js" },
-    { "src": "/(.*)", "dest": "/index.html" }
+      { "src": "/api/(.*)", "dest": "/api/$1.js" },
+      { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
