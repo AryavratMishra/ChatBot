@@ -35,8 +35,14 @@ const App = () => {
        try {
         const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
       // Make the API call to get the bot's response
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, requestOptions);
-      const data = await response.json();
+      const res = await fetch("/api/gemini", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ message: userInput }),
+});
+
+const data = await res.json();
+
       if (!response.ok) throw new Error(data.error.message || "Something went wrong!");
       // Clean and update chat history with bot's response
       const apiResponseText = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
