@@ -1,39 +1,51 @@
-import { useRef } from 'react';
-const ChatForm = ({chatHistory,setChatHistory, generateBotResponse}) => {
+import { useRef } from "react";
 
-    const inputRef=useRef();
+const ChatForm = ({ chatHistory, setChatHistory, generateBotResponse }) => {
+  const inputRef = useRef();
 
-     const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
+
     const userMessage = inputRef.current.value.trim();
     if (!userMessage) return;
- inputRef.current.value = "";
-    // Update chat history with the user's message
-    setChatHistory((history) => [...history, { role: "user", text: userMessage }]);
 
-        // Delay 600 ms before showing "Thinking..." and generating response
+    inputRef.current.value = "";
+
+    // Add the user message to history
+    setChatHistory((prev) => [
+      ...prev,
+      { role: "user", text: userMessage },
+    ]);
+
+    // Delay before bot thinking
     setTimeout(() => {
-      // Add a "Thinking..." placeholder for the bot's response
-      setChatHistory((history) => [...history, { role: "model", text: "Thinking..." }]);
-      // Call the function to generate the bot's response
-      generateBotResponse([...chatHistory, { role: "user", text: `Using the details provided above, please address this query: ${userMessage}` }]);
+      // Add "Thinking..." placeholder
+      setChatHistory((prev) => {
+        const updated = [
+          ...prev,
+          { role: "model", text: "Thinking..." },
+        ];
+
+        // Now call bot with the FRESH history
+        generateBotResponse([...updated]);
+
+        return updated;
+      });
     }, 600);
-   
+  };
 
-
+  return (
+    <form className="chat-form" onSubmit={handleFormSubmit}>
+      <input
+        ref={inputRef}
+        type="text"
+        placeholder="Message..."
+        className="message-input"
+        required
+      />
+      <button className="material-symbols-rounded">arrow_upward</button>
+    </form>
+  );
 };
 
-
-    return (
-        <form action="#" className="chat-form" onSubmit={handleFormSubmit}>
-            <input ref={inputRef} type="text" placeholder='Message...' className="message-input" required />
-
-            <button className="material-symbols-rounded">
-                arrow_upward
-            </button>
-
-        </form>
-    )
-}
-
-export default ChatForm
+export default ChatForm;
