@@ -10,19 +10,19 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing 'contents' in request body" });
     }
 
-    const response = await fetch(
+    const apiRes = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
         process.env.GEMINI_API_KEY,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents }),
+        body: JSON.stringify({ contents })
       }
     );
 
-    const data = await response.json();
+    const data = await apiRes.json();
 
-    if (!response.ok) {
+    if (!apiRes.ok) {
       return res.status(500).json({ error: data.error || "Gemini API error" });
     }
 
